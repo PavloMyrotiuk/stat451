@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from tree.classifier import MyrotiukClassifier
+from util.util import sort_by_first_column
 
 iris = datasets.load_iris()
 X = iris.data[:, [2, 3]]
@@ -23,11 +24,6 @@ sklearn_classifier = DecisionTreeClassifier(criterion='entropy',
                                             random_state=1)
 sklearn_classifier.fit(X_train, y_train)
 sklearn_result = np.hstack((X_test, sklearn_classifier.predict(X_test).reshape(-1, 1)))
-
-
-def sort_by_first_column(arr):
-    return arr[arr[:, 0].argsort()]
-
 
 print(f"Actual: {sort_by_first_column(pamyr_result)}")
 print(f"Expected: {sort_by_first_column(sklearn_result)}")
