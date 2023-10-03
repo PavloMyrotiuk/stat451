@@ -15,12 +15,12 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 samples = np.hstack((X_train, y_train.reshape(-1, 1)))
 
-classifier = MyrotiukKNNClassifier(samples, 3)
+classifier = MyrotiukKNNClassifier(samples, 5)
 pamyr_result = classifier.classify(X_test)
 print(f"Actual {sort_by_first_column(pamyr_result)}")
 
 
-sklearn_model = KNeighborsClassifier(n_neighbors=3)
+sklearn_model = KNeighborsClassifier(n_neighbors=5)
 sklearn_model.fit(X_train, y_train)
 sklearn_result = sklearn_model.predict(X_test)
 features_w_classes = np.hstack((X_test, sklearn_result.reshape(-1, 1)))
