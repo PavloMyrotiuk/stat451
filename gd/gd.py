@@ -1,18 +1,19 @@
 from functools import partial
-import pandas as pd
+import numpy as np
+from functools import reduce
 
-lr = 1e-6
-conv_condition = 1e-8
+lr = 1e-3
+conv_condition = 0.01
 
 
 def predicted_value(w, b, x):
-    return w * x + b
+    return np.sum(x * w + b, axis=1).reshape(-1, 1)
 
 
 def extract_params(data):
-    w, b = 0, 0
+    w, b = np.zeros(data.shape[1] - 1), 0
     nw, nb = calculate_params(w, b, data)
-    while abs(nw - w) > conv_condition and abs(nb - b) > conv_condition:
+    while reduce(lambda k, l: k or l, nw - w > conv_condition) or abs(nb - b) > conv_condition:
         w, b = nw, nb
         nw, nb = calculate_params(w, b, data)
     return w, b
@@ -20,15 +21,10 @@ def extract_params(data):
 
 def calculate_params(w, b, data):
     pvf = partial(predicted_value, w, b)
-    pv = pvf(data[:, 0])
-    av = data[:, 1]
+    x = data[:, :-1]
+    pv = pvf(x)
+    av = data[:, -1:]
     diff = pv - av
-    nw = w - lr * (1 / len(data)) * sum(diff * data[:, 0])
-    nb = b - lr * (1 / len(data)) * sum(diff)
+    nw = w - lr * (1 / len(data)) * np.sum(diff * x, axis=0)
+    nb = b - lr * (1 / len(data)) * np.sum(diff)
     return nw, nb
-
-
-data = pd.read_csv("realest.csv", header=0)
-space_price = data[["Space", "Price"]].dropna().to_numpy()
-
-print(extract_params(space_price))
