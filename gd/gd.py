@@ -2,8 +2,8 @@ from functools import partial
 import numpy as np
 from functools import reduce
 
-lr = 1e-3
-conv_condition = 0.01
+lr = 0.01
+conv_condition = 1e-6
 
 
 def predicted_value(w, b, x):
